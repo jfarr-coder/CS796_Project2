@@ -1,5 +1,12 @@
 import sys
+import matplotlib
+import skimage
 
+def convertToFileName(argv):
+    inp= str(argv)
+    filename = "data/" + inp + ".png"
+    return filename
+    
 if __name__ == "__main__":
-    print('Number of arguments:', len(sys.argv), 'arguments.')
-    print('Argument List:', str(sys.argv[1]))
+    filename = convertToFileName(sys.argv[1])
+    print(filename)
