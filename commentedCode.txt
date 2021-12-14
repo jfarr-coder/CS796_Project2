@@ -1,0 +1,24 @@
+        #def makeCoordinates(self, x1, x2, y1, y2):
+    #    self.coords = []
+
+    #    c1 = Coordinate(1,x1, y1)
+    #    c2 = Coordinate(2,x2, y1)
+    #    c3 = Coordinate(3,x1, y2)
+    #    c4 = Coordinate(4,x2, y2)
+
+    #    self.coords.append(c1)
+    #    self.coords.append(c2)
+    #    self.coords.append(c3)
+    #    self.coords.append(c4)
+    #img = image.imread(filename)
+    #r = Rectangle(255, 255, 255, 0,1)
+    #r.makeCoordinates(1,3,1,5)
+    #r.display()
+    #imgplot = plt.imshow(img)
+    #imgplot.show()
+
+    #arrays =0
+    #for img in image:
+    #    arrays+=1
+    #print(arrays)
+    #plt.title('matplotlib.pyplot.imread() function Example', fontweight ="bold")
