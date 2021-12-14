@@ -1,2 +1,4 @@
 matplotlib
 scikit-image
+Pillow
+numpy
