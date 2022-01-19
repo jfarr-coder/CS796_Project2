@@ -117,9 +117,9 @@ def fitness(randoms, originals):
 def selection(rectangle):
     rgbs = []
     rgb = []
-    rgb.append(rectangles.red)
-    rgb.append(rectangles.blue)
-    rgb.append(rectangles.green)
+    rgb.append(rectangle.red)
+    rgb.append(rectangle.blue)
+    rgb.append(rectangle.green)
     rgbs.append(rgb)
     #print("CODE HERE")
 
@@ -162,14 +162,18 @@ if __name__ == "__main__":
     mutation = np.empty((5, 5))
     print(filename)
     im = Image.open(filename)
+    print("BEFORE CONVERTING TO NUMPY")
     a = np.asarray(im)
+    print("AFTER CONVERTING TO NUMPY")
     print(a)
     print("Getting the Original Rectangles")
     originals = getData(filename)
+    print(originals)
     print("Generating Random Rectangles")
     randoms = generateRectangles(filename)
+    print(randoms)
     print("Finding the Difference Between the Two")
-    fitness(randoms,originals)
+    print(fitness(randoms,originals))
     with cbook.get_sample_data(filename) as image_file:
         image = plt.imread(image_file)
     fig, ax = plt.subplots()

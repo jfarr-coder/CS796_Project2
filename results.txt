@@ -1,0 +1,2 @@
+/home/jfarr/CS796_Project2/data/Davinci.jpeg
+BEFORE CONVERTING TO NUMPY
