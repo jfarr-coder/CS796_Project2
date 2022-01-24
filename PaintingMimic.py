@@ -29,8 +29,8 @@ class Rectangle:
         
 
     def display(self):
-        print("Colors: [{} {} {}]".format(self.red, self.green, self.blue))
         print("Coordinates: [{} {}]".format(self.x, self.y))
+        print("Colors: [{} {} {}]".format(self.red, self.green, self.blue))
         #for c in self.coords:
         #    c.display()
 
@@ -96,18 +96,22 @@ def fitness(randoms, originals):
         green_close = 0 < diff_green < 10
         blue_close = 0 < diff_blue < 10
         if(red_close or green_close or blue_close):
-            selection(rG)
-            diffs.append(diff_red)
-            diffs.append(diff_green)
-            diffs.append(diff_blue)
-        elif(diff_red <0 or diff_green<0 or diff_blue<0):
-            diff_red = randint(0,rO.red)
-            diff_green = randint(0,rO.green)
-            diff_blue = randint(0,rO.blue)
-            diffs.append(diff_red)
-            diffs.append(diff_green)
-            diffs.append(diff_blue)
-            
+            #selection(rG)
+
+            #diffs.append(diff_red)
+            #diffs.append(diff_green)
+            #diffs.append(diff_blue)
+            r = Rectangle(abs(diff_red),abs(diff_green),abs(diff_blue),rO.x,rO.y)
+            diffs.append(r)
+        #elif(diff_red <0 or diff_green<0 or diff_blue<0):
+        #    diff_red = randint(0,rO.red)
+        #    diff_green = randint(0,rO.green)
+        #    diff_blue = randint(0,rO.blue)
+            #diffs.append(diff_red)
+            #diffs.append(diff_green)
+            #diffs.append(diff_blue)
+            r = Rectangle(diff_red,diff_green,diff_blue,rO.x,rO.y)
+            diffs.append(r)
             
         #print("Differences between the two rectangles: {} {} {}".format(diff_red,diff_green,diff_blue))
         i+=1
@@ -164,16 +168,26 @@ if __name__ == "__main__":
     im = Image.open(filename)
     print("BEFORE CONVERTING TO NUMPY")
     a = np.asarray(im)
+    print(a)
+    i = Image.fromarray(a)
+    i.save("test.jpeg")
     print("AFTER CONVERTING TO NUMPY")
     print(a)
     print("Getting the Original Rectangles")
     originals = getData(filename)
-    print(originals)
+    for o in originals:
+        o.display()
     print("Generating Random Rectangles")
     randoms = generateRectangles(filename)
-    print(randoms)
+    for r in randoms:
+        r.display()
     print("Finding the Difference Between the Two")
-    print(fitness(randoms,originals))
+    gented = fitness(randoms,originals)
+    #gented = np.asarray(gens)
+    for g in gented:
+        g.display()
+    #i2 = Image.fromarray(gented)
+    #i2.save("test2.jpeg")
     with cbook.get_sample_data(filename) as image_file:
         image = plt.imread(image_file)
     fig, ax = plt.subplots()
