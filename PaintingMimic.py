@@ -8,16 +8,6 @@ import os
 from random import randint
 from PIL import Image
 
-# Class created for a Coordinate
-class Coordinate:
-    def __init__(self, i, x, y):
-        self.id = i
-        self.x = x
-        self.y = y
-    
-    def display(self):
-        print("Coordinate {}: {},{}".format(self.id,self.x, self.y))
-
 # Class created for a Rectangle
 class Rectangle:  
     def __init__(self, red, green, blue, x, y):
@@ -117,6 +107,35 @@ def fitness(randoms, originals):
         i+=1
     return diffs
 
+# Calculates the differences between both the original and generated rectangles
+def test_fitness(randoms, originals):
+    i=0
+    diffs=[]
+    while i< len(originals):
+        rO = originals[i]
+        rG = randoms[i]
+        
+        diff_red = rO.red - rG.red
+        diff_green = rO.green - rG.green
+        diff_blue = rO.blue - rG.blue
+
+        red_close = 0 < diff_red < 100
+        green_close = 0 < diff_green < 100
+        blue_close = 0 < diff_blue < 100
+        if(red_close and green_close and blue_close):
+            #selection(rG)
+            diffs.append(diff_red)
+            diffs.append(diff_green)
+            diffs.append(diff_blue)
+        else:
+            diffs.append(rO.red)
+            diffs.append(rO.green)
+            diffs.append(rO.blue)
+            
+        #print("Differences between the two rectangles: {} {} {}".format(diff_red,diff_green,diff_blue))
+        i+=1
+    return diffs
+
 # Planned to have the function take the rectangle parameter and append it to the mutated array.
 def selection(rectangle):
     rgbs = []
@@ -147,52 +166,67 @@ def convertToFileName(argv):
     inp= str(argv)
     cwd = os.getcwd()
     filename = cwd + "/data/" + inp + ".jpeg"
+    i = Image.open(filename)
+    o = np.asarray(i)
+    directory = cwd + "/results/" + inp
+    if(not os.path.isdir(directory)):
+        os.makedirs(directory)
+    filename = directory + "/Original.jpeg"
+    if(not os.path.exists(filename)):
+        i = Image.fromarray(o)
+        i.save(filename)
     return str(filename)
 
 # Saves the result in an output file in the results directory
 # Has all the images outputted already
-def saveFileName(argv):
+def saveFileName(argv, result, gen):
     inp= str(argv)
     cwd = os.getcwd()
-    directory = cwd + "/results/" + inp 
+    directory = cwd + "/results/" + inp
     if(not os.path.isdir(directory)):
         os.makedirs(directory)
-    filename = directory + "/Result0.jpeg"
+    filename = directory + "/Result" + str(result) + ".jpeg"
+    if(not os.path.exists(filename)):
+        i = Image.fromarray(gen.astype(np.uint8))
+        i.save(filename)
     return str(filename)
 
 if __name__ == "__main__":
     filename = convertToFileName(sys.argv[1])
-    saveLoc = saveFileName(sys.argv[1])
     mutation = np.empty((5, 5))
-    print(filename)
     im = Image.open(filename)
-    print("BEFORE CONVERTING TO NUMPY")
-    a = np.asarray(im)
-    print(a)
-    i = Image.fromarray(a)
-    i.save("test.jpeg")
-    print("AFTER CONVERTING TO NUMPY")
-    print(a)
-    print("Getting the Original Rectangles")
-    originals = getData(filename)
-    for o in originals:
-        o.display()
-    print("Generating Random Rectangles")
-    randoms = generateRectangles(filename)
-    for r in randoms:
-        r.display()
-    print("Finding the Difference Between the Two")
-    gented = fitness(randoms,originals)
-    #gented = np.asarray(gens)
-    for g in gented:
-        g.display()
-    #i2 = Image.fromarray(gented)
-    #i2.save("test2.jpeg")
-    with cbook.get_sample_data(filename) as image_file:
-        image = plt.imread(image_file)
-    fig, ax = plt.subplots()
-    ax.imshow(image)
-    ax.axis('off')
 
-    plt.savefig(saveLoc)
-    plt.show()
+    #print("BEFORE CONVERTING TO NUMPY")
+    #a = np.asarray(im)
+    #print(a)
+    #print(a.shape)
+    #print(a.size)
+    #print(a.size)
+    #i = Image.fromarray(a)
+    #print(i.size)
+    #print(i.shape)
+    #i.save("test.jpeg")
+    #print("AFTER CONVERTING TO NUMPY")
+    #print("Getting the Original Rectangles")
+    originals = getData(filename)
+    #for o in originals:
+    #    o.display()
+    #print("Generating Random Rectangles")
+    #randoms = generateRectangles(filename)
+    #for r in randoms:
+    #    r.display()
+    #print("Finding the Difference Between the Two")
+    r = 1
+    while(r<=5):
+        randoms = generateRectangles(filename)
+        gens = test_fitness(randoms,originals)
+        gented = np.asarray(gens).reshape(im.height, im.width, 3)
+        saveFileName(sys.argv[1],r, gented)
+        r+=1
+    #gented = np.asarray(gens).reshape(im.height, im.width, 3)
+    #g = gented.reshape(im.height, im.width, 3)
+    #print(g)
+    #print(g.shape)
+    #print(g.size)
+    #i2 = Image.fromarray(g.astype(np.uint8))
+    #i2.save("test5.jpeg")

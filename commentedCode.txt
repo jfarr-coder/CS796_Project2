@@ -22,3 +22,23 @@
     #    arrays+=1
     #print(arrays)
     #plt.title('matplotlib.pyplot.imread() function Example', fontweight ="bold")
+
+    # CODE FOR pyplot
+    with cbook.get_sample_data(filename) as image_file:
+        image = plt.imread(image_file)
+    fig, ax = plt.subplots()
+    ax.imshow(image)
+    ax.axis('off')
+
+    plt.savefig(saveLoc)
+    plt.show()
+
+    # Class created for a Coordinate
+    class Coordinate:
+    def __init__(self, i, x, y):
+        self.id = i
+        self.x = x
+        self.y = y
+    
+    def display(self):
+        print("Coordinate {}: {},{}".format(self.id,self.x, self.y))
