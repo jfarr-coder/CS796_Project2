@@ -42,3 +42,76 @@
     
     def display(self):
         print("Coordinate {}: {},{}".format(self.id,self.x, self.y))
+
+# Calculates the differences between both the original and generated rectangles
+def fitness(randoms, originals):
+    i=0
+    diffs=[]
+    while i< len(originals):
+        rO = originals[i]
+        rG = randoms[i]
+        
+        diff_red = rO.red - rG.red
+        diff_green = rO.green - rG.green
+        diff_blue = rO.blue - rG.blue
+
+        red_close = 0 < diff_red < 10
+        green_close = 0 < diff_green < 10
+        blue_close = 0 < diff_blue < 10
+        if(red_close or green_close or blue_close):
+            #selection(rG)
+
+            #diffs.append(diff_red)
+            #diffs.append(diff_green)
+            #diffs.append(diff_blue)
+            r = Rectangle(abs(diff_red),abs(diff_green),abs(diff_blue),rO.x,rO.y)
+            diffs.append(r)
+        #elif(diff_red <0 or diff_green<0 or diff_blue<0):
+        #    diff_red = randint(0,rO.red)
+        #    diff_green = randint(0,rO.green)
+        #    diff_blue = randint(0,rO.blue)
+            #diffs.append(diff_red)
+            #diffs.append(diff_green)
+            #diffs.append(diff_blue)
+            r = Rectangle(diff_red,diff_green,diff_blue,rO.x,rO.y)
+            diffs.append(r)
+            
+        #print("Differences between the two rectangles: {} {} {}".format(diff_red,diff_green,diff_blue))
+        i+=1
+    return diffs
+
+    # Calculates the differences between both the original and generated rectangles
+def test_fitness(randoms, originals):
+    i=0
+    diffs=[]
+    while i< len(originals):
+        rO = originals[i]
+        rG = randoms[i]
+        
+        diff_red = rO.red - rG.red
+        diff_green = rO.green - rG.green
+        diff_blue = rO.blue - rG.blue
+
+        red_close = 0 < diff_red < rO.red
+        green_close = 0 < diff_green < rO.green
+        blue_close = 0 < diff_blue < rO.blue
+        if(red_close and green_close and blue_close):
+            #selection(rG)
+            diffs.append(diff_red)
+            diffs.append(diff_green)
+            diffs.append(diff_blue)
+        else:
+            diffs.append(rO.red)
+            diffs.append(rO.green)
+            diffs.append(rO.blue)
+            
+        #print("Differences between the two rectangles: {} {} {}".format(diff_red,diff_green,diff_blue))
+        i+=1
+    return diffs
+
+# Planned to have the function take the height and width of the data and then use it for creating an empty numpy array.
+# The array would take mix both aspects of the original and generated rectangles.
+# Finally, I was thinking of having that array be converted into an image
+def geneticMutation(height, width):
+    mutation = np.empty((height, width))
+    #print("CODE HERE")

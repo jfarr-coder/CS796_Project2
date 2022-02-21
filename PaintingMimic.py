@@ -16,8 +16,10 @@ class Rectangle:
         self.blue = blue
         self.x = x
         self.y = y
-        
+     #   self.fitness = 0.0
 
+    #def setFitness(self,f):
+    #    self.fitness = f
     def display(self):
         print("Coordinates: [{} {}]".format(self.x, self.y))
         print("Colors: [{} {} {}]".format(self.red, self.green, self.blue))
@@ -44,6 +46,7 @@ def getData(filename):
                 p4 = str.split(p2[1],"]")
                 B = int(p4[0])
                 r = Rectangle(R,G,B,h,w)
+                #r.setFitness(100.0)
                 originals.append(r)
 
                 w+=1
@@ -58,9 +61,11 @@ def generateRectangles(filename):
         pix = im.load()
         width, height = im.size
     h=0
-    while h < height:
+    excess_height=height*2
+    excess_width=width*2
+    while h < excess_height:
         w=0
-        while w < width:
+        while w < excess_width:
             R= randint(0,255)
             G= randint(0,255)
             B= randint(0,255)
@@ -71,87 +76,63 @@ def generateRectangles(filename):
     return rectangles
 
 # Calculates the differences between both the original and generated rectangles
-def fitness(randoms, originals):
-    i=0
-    diffs=[]
-    while i< len(originals):
-        rO = originals[i]
-        rG = randoms[i]
-        
-        diff_red = rO.red - rG.red
-        diff_green = rO.green - rG.green
-        diff_blue = rO.blue - rG.blue
+def fitness(random, original):
+    o_sum=original.red + original.green + original.blue
+    r_sum=random.red + random.green + random.blue
 
-        red_close = 0 < diff_red < 10
-        green_close = 0 < diff_green < 10
-        blue_close = 0 < diff_blue < 10
-        if(red_close or green_close or blue_close):
-            #selection(rG)
-
-            #diffs.append(diff_red)
-            #diffs.append(diff_green)
-            #diffs.append(diff_blue)
-            r = Rectangle(abs(diff_red),abs(diff_green),abs(diff_blue),rO.x,rO.y)
-            diffs.append(r)
-        #elif(diff_red <0 or diff_green<0 or diff_blue<0):
-        #    diff_red = randint(0,rO.red)
-        #    diff_green = randint(0,rO.green)
-        #    diff_blue = randint(0,rO.blue)
-            #diffs.append(diff_red)
-            #diffs.append(diff_green)
-            #diffs.append(diff_blue)
-            r = Rectangle(diff_red,diff_green,diff_blue,rO.x,rO.y)
-            diffs.append(r)
-            
-        #print("Differences between the two rectangles: {} {} {}".format(diff_red,diff_green,diff_blue))
-        i+=1
-    return diffs
-
-# Calculates the differences between both the original and generated rectangles
-def test_fitness(randoms, originals):
-    i=0
-    diffs=[]
-    while i< len(originals):
-        rO = originals[i]
-        rG = randoms[i]
-        
-        diff_red = rO.red - rG.red
-        diff_green = rO.green - rG.green
-        diff_blue = rO.blue - rG.blue
-
-        red_close = 0 < diff_red < 100
-        green_close = 0 < diff_green < 100
-        blue_close = 0 < diff_blue < 100
-        if(red_close and green_close and blue_close):
-            #selection(rG)
-            diffs.append(diff_red)
-            diffs.append(diff_green)
-            diffs.append(diff_blue)
-        else:
-            diffs.append(rO.red)
-            diffs.append(rO.green)
-            diffs.append(rO.blue)
-            
-        #print("Differences between the two rectangles: {} {} {}".format(diff_red,diff_green,diff_blue))
-        i+=1
-    return diffs
+    fitness = (r_sum/o_sum)*100
+    return fitness
 
 # Planned to have the function take the rectangle parameter and append it to the mutated array.
-def selection(rectangle):
-    rgbs = []
-    rgb = []
-    rgb.append(rectangle.red)
-    rgb.append(rectangle.blue)
-    rgb.append(rectangle.green)
-    rgbs.append(rgb)
-    #print("CODE HERE")
+def selection(random, originals, f=None):
+    old_fitness=0.0
+    selection=random
+    for o in originals:
+        if o==f:
+            continue
+        fitn=fitness(random,o)
+        if(fitn<old_fitness):
+            continue
+        else:
+            old_fitness=fitn
+    return random
 
-# Planned to have the function take the height and width of the data and then use it for creating an empty numpy array.
-# The array would take mix both aspects of the original and generated rectangles.
-# Finally, I was thinking of having that array be converted into an image
-def geneticMutation(height, width):
-    mutation = np.empty((height, width))
-    #print("CODE HERE")
+def mutate(child):
+    gen=randint(0,2)
+    if(gen==0):
+        child.red=randint(0,255)
+    elif(gen==1):
+        child.green=randint(0,255)
+    elif(gen==2):
+        child.blue=randint(0,255)
+    return child
+
+def crossover(parent1, parent2):
+    gen=randint(0,2)
+    if(gen==0):
+        child=Rectangle(parent1.red, parent1.green, parent2.blue, parent1.x, parent1.y)
+    elif(gen==1):
+        child=Rectangle(parent1.red, parent2.green, parent2.blue, parent1.x, parent1.y)
+    elif(gen==2):
+        child=Rectangle(parent2.red, parent2.green, parent1.blue, parent1.x, parent1.y)
+    return child
+
+def genetic(randoms, originals):
+    population = []
+    prob_mutation=None
+    gen=randint(0,1)
+    for r in range(len(randoms)):
+        p1 = selection(randoms[r], originals)
+        p2 = selection(randoms[r+1], originals, f=p1)
+        child = crossover(p1, p2)
+        if(gen==1):
+            prob_mutation=1/3
+        if(prob_mutation!=None):
+            child=mutate()
+        population.append(child.red)
+        population.append(child.green)
+        population.append(child.blue)
+    return population
 
 #Links That Could Help Me
 # https://matplotlib.org/stable/tutorials/introductory/images.html
@@ -219,7 +200,7 @@ if __name__ == "__main__":
     r = 1
     while(r<=5):
         randoms = generateRectangles(filename)
-        gens = test_fitness(randoms,originals)
+        gens = genetic(randoms,originals)
         gented = np.asarray(gens).reshape(im.height, im.width, 3)
         saveFileName(sys.argv[1],r, gented)
         r+=1
