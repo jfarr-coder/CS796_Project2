@@ -6,7 +6,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import os
 from random import randint
-from PIL import Image
+from PIL import Image, ImageDraw
 
 # Class created for a Rectangle
 class Rectangle:  
@@ -63,9 +63,9 @@ def generateRectangles(filename):
     h=0
     excess_height=height*2
     excess_width=width*2
-    while h < excess_height:
+    while h < height:
         w=0
-        while w < excess_width:
+        while w < width:
             R= randint(0,255)
             G= randint(0,255)
             B= randint(0,255)
@@ -77,7 +77,7 @@ def generateRectangles(filename):
 
 # Calculates the differences between both the original and generated rectangles
 def fitness(random, original):
-    o_sum=original.red + original.green + original.blue
+    o_sum=original.red + original.green + original.blue + 1
     r_sum=random.red + random.green + random.blue
 
     fitness = (r_sum/o_sum)*100
@@ -86,16 +86,18 @@ def fitness(random, original):
 # Planned to have the function take the rectangle parameter and append it to the mutated array.
 def selection(random, originals, f=None):
     old_fitness=0.0
-    selection=random
+    #selection=random
     for o in originals:
         if o==f:
             continue
         fitn=fitness(random,o)
         if(fitn<old_fitness):
             continue
-        else:
+        elif(fitn>= 90 or fitn<=100):
+            selection=random
             old_fitness=fitn
-    return random
+    #selection.display()
+    return selection
 
 def mutate(child):
     gen=randint(0,2)
@@ -128,7 +130,8 @@ def genetic(randoms, originals):
         if(gen==1):
             prob_mutation=1/3
         if(prob_mutation!=None):
-            child=mutate()
+            child=mutate(child)
+        child.display()
         population.append(child.red)
         population.append(child.green)
         population.append(child.blue)
@@ -176,34 +179,42 @@ if __name__ == "__main__":
     filename = convertToFileName(sys.argv[1])
     mutation = np.empty((5, 5))
     im = Image.open(filename)
+    #im1 = Image.Image.getcolors(im) 
+    width, height = im.size
+ 
+    # Setting the points for cropped image
+    left = 5
+    top = height / 4
+    right = 164
+    bottom = 3 * height / 4
+    
+    crop1 = im.crop((left, top, right, bottom))
+    crop1.save("Crop.jpg")
+    im3 = Image.Image.getcolors(crop1) 
+    for i in im3:
+        print(i[1])
 
-    #print("BEFORE CONVERTING TO NUMPY")
-    #a = np.asarray(im)
-    #print(a)
-    #print(a.shape)
-    #print(a.size)
-    #print(a.size)
-    #i = Image.fromarray(a)
-    #print(i.size)
-    #print(i.shape)
-    #i.save("test.jpeg")
-    #print("AFTER CONVERTING TO NUMPY")
-    #print("Getting the Original Rectangles")
-    originals = getData(filename)
-    #for o in originals:
-    #    o.display()
-    #print("Generating Random Rectangles")
-    #randoms = generateRectangles(filename)
-    #for r in randoms:
-    #    r.display()
-    #print("Finding the Difference Between the Two")
+    w, h = 220, 190
+    shape = [(100, 100), (w - 10, h - 10)]
+    im2 = Image.new( mode = "RGB", size = (im.width, im.height))
+    #im2.save("Test.jpg")
+
+    # creating new Image object
+    im3 = Image.new("RGB", (w, h))
+  
+    # create rectangle image
+    im3 = ImageDraw.Draw(im2)  
+    im3.rectangle(shape, fill ="#ffff33")
+    im2.save("Test2.jpg")
+    originals = getData(filename) 
     r = 1
-    while(r<=5):
-        randoms = generateRectangles(filename)
-        gens = genetic(randoms,originals)
-        gented = np.asarray(gens).reshape(im.height, im.width, 3)
-        saveFileName(sys.argv[1],r, gented)
-        r+=1
+    #while(r<=5):
+    #    randoms = generateRectangles(filename)
+    #    gens = genetic(randoms,originals)
+        #print(gens)
+    #    gented = np.asarray(gens).reshape(im.height, im.width, 3)
+    #    saveFileName(sys.argv[1],r, gented)
+    #    r+=1
     #gented = np.asarray(gens).reshape(im.height, im.width, 3)
     #g = gented.reshape(im.height, im.width, 3)
     #print(g)

@@ -115,3 +115,32 @@ def test_fitness(randoms, originals):
 def geneticMutation(height, width):
     mutation = np.empty((height, width))
     #print("CODE HERE")
+
+#print("BEFORE CONVERTING TO NUMPY")
+    #a = np.asarray(im)
+    #print(a)
+    #print(a.shape)
+    #print(a.size)
+    #print(a.size)
+    #i = Image.fromarray(a)
+    #print(i.size)
+    #print(i.shape)
+    #i.save("test.jpeg")
+    #print("AFTER CONVERTING TO NUMPY")
+    #print("Getting the Original Rectangles")
+
+#for o in originals:
+    #    o.display()
+    #print("Generating Random Rectangles")
+    #randoms = generateRectangles(filename)
+    #for r in randoms:
+    #    r.display()
+    #print("Finding the Difference Between the Two")
+
+    https://www.geeksforgeeks.org/python-pil-getcolors-method/
+    https://pillow.readthedocs.io/en/stable/reference/Image.html
+    https://www.geeksforgeeks.org/python-pil-getpalette-method/
+    https://www.geeksforgeeks.org/python-pil-image-crop-method/
+    https://pillow.readthedocs.io/en/stable/reference/ImageColor.html
+    https://www.geeksforgeeks.org/python-pil-imagecolor-getcolor-method/
+    https://www.geeksforgeeks.org/python-pil-imagecolor-getrgb-method/
